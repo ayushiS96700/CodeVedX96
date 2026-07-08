@@ -1,0 +1,7 @@
+## Technologies Used
+
+- Python 3
+- Pandas
+- Scikit-learn
+- CSV File Storage
+- OS Module
