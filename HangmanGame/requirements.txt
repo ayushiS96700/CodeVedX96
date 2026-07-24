@@ -1,2 +1,0 @@
-# No external libraries are required.
-# This project uses only Python built-in modules.
