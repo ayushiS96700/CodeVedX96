@@ -1,1 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Helpdesk Chatbot</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        body { display: flex; height: 100vh; background: #f4f6f9; }
+        .sidebar { width: 350px; background: #2c3e50; color: white; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .sidebar h2 { font-size: 1.2rem; border-bottom: 1px solid #34495e; padding-bottom: 10px; }
+        .sidebar input, .sidebar textarea, .sidebar button { width: 100%; padding: 10px; border-radius: 5px; border: none; }
+        .sidebar textarea { height: 60px; resize: none; }
+        .sidebar button { background: #27ae60; color: white; font-weight: bold; cursor: pointer; }
+        .sidebar button:hover { background: #219150; }
+        
+        .chat-container { flex: 1; display: flex; flex-direction: column; background: #fff; }
+        .chat-header { background: #2980b9; color: white; padding: 15px; font-size: 1.2rem; font-weight: bold; }
+        .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .message { max-width: 70%; padding: 10px 15px; border-radius: 8px; font-size: 0.95rem; }
+        .user-message { background: #2980b9; color: white; align-self: flex-end; }
+        .bot-message { background: #eef2f5; color: #333; align-self: flex-start; }
+        
+        .input-area { display: flex; padding: 15px; border-top: 1px solid #ddd; gap: 10px; }
+        .input-area input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 5px; outline: none; }
+        .input-area button { padding: 12px 20px; background: #2980b9; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .input-area button:hover { background: #1f6391; }
+    </style>
+</head>
+<body>
 
+    <div class="sidebar">
+        <h2>⚙️ Admin Panel (Update Dataset)</h2>
+        <label>Intent Tag:</label>
+        <input type="text" id="adminTag" placeholder="e.g., salary_date">
+        
+        <label>Patterns (comma separated):</label>
+        <textarea id="adminPatterns" placeholder="When is salary credited?, Payday date"></textarea>
+        
+        <label>Responses (comma separated):</label>
+        <textarea id="adminResponses" placeholder="Salary is credited on the 30th of every month."></textarea>
+        
+        <button onclick="addIntent()">Add / Train Intent</button>
+        <p id="adminStatus" style="font-size: 0.85rem; color: #f1c40f;"></p>
+    </div>
+    <div class="chat-container">
+        <div class="chat-header">🤖 Internal Helpdesk AI Assistant</div>
+        <div class="chat-box" id="chatBox">
+            <div class="message bot-message">Hello! I am your Internal Helpdesk Bot. Ask me anything about WiFi, Leaves, or Password Reset!</div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Type your query here..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            appendMessage(message, 'user-message');
+            input.value = '';
+
+            const response = await fetch('/get_response', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+            const data = await response.json();
+            appendMessage(data.response, 'bot-message');
+        }
+
+        function appendMessage(text, className) {
+            const chatBox = document.getElementById('chatBox');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${className}`;
+            msgDiv.innerText = text;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        async function addIntent() {
+            const tag = document.getElementById('adminTag').value.trim();
+            const patterns = document.getElementById('adminPatterns').value.trim();
+            const responses = document.getElementById('adminResponses').value.trim();
+            const status = document.getElementById('adminStatus');
+
+            if (!tag || !patterns || !responses) {
+                status.innerText = "Please fill all admin fields!";
+                return;
+            }
+
+            const res = await fetch('/admin/add_intent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tag, patterns, responses })
+            });
+
+            const data = await res.json();
+            status.innerText = data.message;
+            if(data.status === 'success') {
+                document.getElementById('adminTag').value = '';
+                document.getElementById('adminPatterns').value = '';
+                document.getElementById('adminResponses').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
