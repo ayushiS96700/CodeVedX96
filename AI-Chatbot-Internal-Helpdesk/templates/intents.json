@@ -1,1 +1,79 @@
-
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "Hello",
+        "Hey",
+        "Good day",
+        "Is anyone there?"
+      ],
+      "responses": [
+        "Hello! How can I assist you with the internal helpdesk today?",
+        "Hi there! What can I help you with?"
+      ]
+    },
+    {
+      "tag": "wifi_issue",
+      "patterns": [
+        "WiFi not working",
+        "Internet is down",
+        "How to connect to office WiFi?",
+        "Network problem"
+      ],
+      "responses": [
+        "Please connect to 'Office_Guest_WiFi' using your employee ID or restart your router/adapter."
+      ]
+    },
+    {
+      "tag": "leave_policy",
+      "patterns": [
+        "How to apply for leave?",
+        "Leave policy",
+        "Casual leave rules",
+        "Sick leave",
+        "how to apply leave"
+      ],
+      "responses": [
+        "You can apply for leaves through the HR Portal under 'Time Off' section. Requires manager approval.",
+        "you can apply for leave through the HR Portal under time off",
+        "manager approval is requi"
+      ]
+    },
+    {
+      "tag": "password_reset",
+      "patterns": [
+        "Forgot my password",
+        "Reset password",
+        "Locked out of system"
+      ],
+      "responses": [
+        "To reset your password, visit selfservice.company.com or contact IT desk at ext 404."
+      ]
+    },
+    {
+      "tag": "29-07-2026",
+      "patterns": [
+        "30-07-2026"
+      ],
+      "responses": [
+        "yes"
+      ]
+    },
+    {
+      "tag": "wifi_help",
+      "patterns": [
+        "How to connect to wifi",
+        "Office wifi",
+        "Wifi password",
+        "Connect wifi",
+        "Internet not working"
+      ],
+      "responses": [
+        "Connect to Office_Guest_WiFi using your employee ID.",
+        "Contact IT support if the issue continues."
+      ]
+    }
+  ]
+}
